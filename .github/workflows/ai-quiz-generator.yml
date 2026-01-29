@@ -19,9 +19,11 @@ jobs:
           echo "EOF" >> $GITHUB_ENV
 
       - name: Call OpenAI API
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           curl https://api.openai.com/v1/chat/completions \
-            -H "Authorization: Bearer $OPENAI_API_KEY" \
+            -H "Authorization: Bearer ${OPENAI_API_KEY}" \
             -H "Content-Type: application/json" \
             -d "{
               \"model\": \"gpt-4o-mini\",
@@ -30,9 +32,6 @@ jobs:
                 {\"role\": \"user\", \"content\": \"$PROMPT\"}
               ]
             }" > response.json
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-
       - name: Save output
         run: |
           mkdir -p output
