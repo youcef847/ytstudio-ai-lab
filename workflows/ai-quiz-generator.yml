@@ -42,6 +42,9 @@ jobs:
         run: |
           git config user.name "ytstudio-ai-bot"
           git config user.email "bot@ytstudio.ai"
-          git add output/latest.json
-          git commit -m "ai: generate quiz questions"
+
+          git pull --rebase
+
+          git add output
+          git commit -m "ai: generate quiz questions" || echo "No changes to commit"
           git push
