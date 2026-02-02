@@ -22,16 +22,22 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
+          echo "Using key length: ${#OPENAI_API_KEY}"
+
           curl https://api.openai.com/v1/chat/completions \
             -H "Authorization: Bearer ${OPENAI_API_KEY}" \
             -H "Content-Type: application/json" \
-            -d "{
-              \"model\": \"gpt-4o-mini\",
-              \"messages\": [
-                {\"role\": \"system\", \"content\": \"You are a helpful assistant.\"},
-                {\"role\": \"user\", \"content\": \"$PROMPT\"}
-              ]
-            }" > response.json
+            -d @- <<EOF > response.json
+          {
+            "model": "gpt-4o-mini",
+            "messages": [
+              { "role": "system", "content": "You are a helpful assistant." },
+              { "role": "user", "content": "'"$(cat prompts/quiz-generator.txt | sed 's/"/\\"/g')"'"
+              }
+            ]
+          }
+          EOF
+
       - name: Save output
         run: |
           mkdir -p output
