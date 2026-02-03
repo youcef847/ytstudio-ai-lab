@@ -35,7 +35,7 @@ jobs:
           curl -X POST \
             -H "Authorization: Bearer ${HF_API_KEY}" \
             -H "Content-Type: application/json" \
-            https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2 \
+            https://router.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2 \
             -d @request.json > response.json
       - name: Save output
         run: |
