@@ -18,25 +18,29 @@ jobs:
           cat prompts/quiz-generator.txt >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
 
-      - name: Call Hugging Face API
+      - name: Call Gemini API
         env:
-          HF_API_KEY: ${{ secrets.HF_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           PROMPT=$(cat prompts/quiz-generator.txt)
 
           jq -n --arg prompt "$PROMPT" '{
-            inputs: $prompt,
-            parameters: {
-              max_new_tokens: 1500,
-              temperature: 0.7
-            }
+            contents: [
+              {
+                role: "user",
+                parts: [
+                  { text: $prompt }
+                ]
+              }
+            ]
           }' > request.json
 
           curl -X POST \
-            -H "Authorization: Bearer ${HF_API_KEY}" \
             -H "Content-Type: application/json" \
-            https://router.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2 \
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}" \
             -d @request.json > response.json
+
+
       - name: Save output
         run: |
           mkdir -p output
